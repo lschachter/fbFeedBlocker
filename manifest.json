@@ -1,0 +1,23 @@
+{
+	"manifest_version": 2,
+	"name": "Focus",
+	"version": "1.0",
+	"description": "This Chrome Extension removes your facebook feed, while still allowing you to access messager and other FB apps.",
+	"content_scripts": [
+		{
+			"matches": ["https://www.facebook.com/"],
+			"js": ["./main.js"]
+		}
+	],
+
+	"browser_action": {
+		"default_icon": "./icon/icon48.png",
+		"default_popup": "popup.html"
+	},
+
+	"icons": {
+		"16": "./icon/icon16.png",
+		"48": "./icon/icon48.png",
+    "128": "./icon/icon128.png"
+	}
+}
