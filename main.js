@@ -1,5 +1,4 @@
 
-
 function removeUnwantedEls() {
 	let stories = $("#stories_pagelet_rhc");
 	let vids = $("#pagelet_video_home_watch_list_rhc");
@@ -22,6 +21,7 @@ $.ajax({
 	},
 	error: function(err) {
 		console.log('error: ' + err);
+		createLocalImgs();
 	}
 });
 
@@ -32,7 +32,7 @@ function replaceFeed(result) {
 	let srcBase = 'https://unsplash.it/1200/800?image=';
 	let inspImg = setInitialImg(parental, srcBase, result);
 	
-	setNewImage(result, inspImg, srcBase);
+	setNewImage(inspImg, srcBase, result);
 }
 
 function getFeedParent() {
@@ -56,15 +56,18 @@ function setInitialImg(parental, srcBase, pics) {
 	return inspImg;
 }
 
-function setNewImage(pics, inspImg, srcBase) {
+function setNewImage(inspImg, srcBase, pics) {
+	let i;
 	function cycleImages() {
-		let i = Math.floor(Math.random() * pics.length);
-		$(inspImg).attr('src', srcBase + pics[i].id);
+		i = Math.floor(Math.random() * pics.length);
+		$(inspImg).fadeTo(1000, 0.0, () => {
+			$(inspImg).attr('src', srcBase + pics[i].id);
+		}).fadeTo(1000,1.0, () => {
+			$(inspImg).attr('src', srcBase + pics[i].id);
+		});
 	}
 	setInterval(cycleImages, 10000); 
 }
-
-// createLocalImgs();
 
 function createLocalImgs() {
 	let inspURL = buildLocalImageURL();
