@@ -1,3 +1,8 @@
+/* This extension removes the facebook feed,
+ * replacing it with a loop of positive calming images.
+ * Also removed are all non-news elements in the right column.
+ * Also added is an 'inspirational' push to keep working.
+ */
 
 function removeUnwantedEls() {
 	let stories = $("#stories_pagelet_rhc");
@@ -20,6 +25,8 @@ $.ajax({
 		replaceFeed(result);
 	},
 	error: function(err) {
+		// If something goes wrong pulling the photos,
+		// use local images
 		console.log('error: ' + err);
 		replaceFeedWithLocalImages();
 	}
@@ -52,6 +59,7 @@ function setInspText(parental) {
 	parental.append(inspText);
 }
 
+// srcBase will be empty if pics are local
 function setInitialImg(parental, srcBase, pics) {
 	let index = Math.floor(Math.random() * pics.length);
 	let image = pics[index];
