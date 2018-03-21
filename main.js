@@ -21,18 +21,22 @@ $.ajax({
 	},
 	error: function(err) {
 		console.log('error: ' + err);
-		createLocalImgs();
+		replaceFeedWithLocalImages();
 	}
 });
 
 function replaceFeed(result) {
-	let parental = getFeedParent();
-	setInspText(parental);
-
-	let srcBase = 'https://unsplash.it/1200/800?image=';
-	let inspImg = setInitialImg(parental, srcBase, result);
+	const srcBase = 'https://unsplash.it/1200/800?image=';
+	const inspImg = getCleanedImgElement(srcBase, result);
 	
 	setNewImage(inspImg, srcBase, result);
+}
+
+function getCleanedImgElement(srcBase, pics) {
+	const parental = getFeedParent();
+	setInspText(parental);
+	const inspImg = setInitialImg(parental, srcBase, pics);
+	return inspImg;
 }
 
 function getFeedParent() {
@@ -51,55 +55,47 @@ function setInspText(parental) {
 function setInitialImg(parental, srcBase, pics) {
 	let index = Math.floor(Math.random() * pics.length);
 	let image = pics[index];
-	let src = srcBase + image.id;
+	let src = (srcBase === "") ? image : srcBase + image.id;
 	let inspImg = buildImageElement(parental, src);
 	return inspImg;
 }
 
 function setNewImage(inspImg, srcBase, pics) {
 	let i;
+	let newSrc;
 	function cycleImages() {
 		i = Math.floor(Math.random() * pics.length);
 		$(inspImg).fadeTo(1000, 0.0, () => {
-			$(inspImg).attr('src', srcBase + pics[i].id);
-		}).fadeTo(1000,1.0, () => {
-			$(inspImg).attr('src', srcBase + pics[i].id);
-		});
+			newSrc = (srcBase === "") ? pics[i] : srcBase + pics[i].id;
+			$(inspImg).attr('src', newSrc);
+		}).fadeTo(1000, 1.0);
 	}
 	setInterval(cycleImages, 10000); 
-}
-
-function createLocalImgs() {
-	let inspURL = buildLocalImageURL();
-	let inspImg = buildImageElement(parental,inspURL);
-
-	let pics = [];
-	for (let i = 0; i < 7; i++) {
-		inspURL = buildLocalImageURL();
-		pics.push(inspURL);
-	}
-	
-	setNewLocalImage(pics, inspImg);
-}
-
-function setNewLocalImage(pics, inspImg) {
-	let i = 0;
-	function cycleImages() {
-		$(inspImg).attr('src', pics[i]);
-		i = (i + 1) % pics.length;
-	}
-	setInterval(cycleImages, 10000); 
-}
-
-function buildLocalImageURL() {
-	let index = Math.floor(Math.random()*23) + 1;
-	let imgURL = chrome.extension.getURL('positive_pics/images-'+index+'.jpg');
-	return imgURL;
 }
 
 function buildImageElement(parental, imgURL) {
-	let inspImg = $("<img src=\""+imgURL+"\">");
+	let inspImg = $("<img>", { src: imgURL });
 	inspImg.addClass('inspImage');
 	parental.append(inspImg);
 	return inspImg;
+}
+
+// local image creation
+
+function replaceFeedWithLocalImages() {
+	const numPics = 24;
+	let pics = buildLocalImageArray(numPics);
+
+	let inspImg = getCleanedImgElement("", pics);
+
+	setNewImage(inspImg, "", pics);
+}
+
+function buildLocalImageArray(numPics) {
+	let pics = [];
+	for (let i = 1; i <= numPics; i++) {
+		let inspURL = chrome.extension.getURL('positive_pics/images-'+i+'.jpg');
+		pics.push(inspURL);
+	}
+	return pics;
 }

@@ -23,5 +23,5 @@
     "128": "./icon/icon128.png"
 	},
 
-	"web_accessible_resources": ["positive_pics/*"]
+	"web_accessible_resources": ["positive_pics/images-*"]
 }
